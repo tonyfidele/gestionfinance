@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  budgets   Budget[]
+}
+
+model Budget {
+  id           String        @id @default(uuid())
+  name         String
+  amount       Float
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  emoji        String?
+  transactions Transaction[]
+  createdAt    DateTime      @default(now())
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  description String
+  amount      Float
+  budgetId    String?
+  budget      Budget? @relation(fields: [budgetId], references: [id])
+  emoji       String?
+  createdAt   DateTime @default(now())
+}
+//comptabilite
+model Account {
+  id        String   @id @default(cuid())
+  code      String   // ex: 512
+  name      String   // ex: Banque
+  type      AccountType
+  companyId String
+
+  createdAt DateTime @default(now())
+}
+
+enum AccountType {
+  ASSET
+  LIABILITY
+  EXPENSE
+  INCOME
+}
+model Journal {
+  id        String   @id @default(cuid())
+  code      String   // ACH, VTE, BNK...
+  name      String   // Achats, Ventes, Banque
+  companyId String
+
+  createdAt DateTime @default(now())
+}
+model Entry {
+  id        String   @id @default(cuid())
+  date      DateTime
+  journalId String
+  journal   Journal  @relation(fields: [journalId], references: [id])
+  description String
+  companyId String
+  lines     EntryLine[]
+  createdAt DateTime @default(now())
+}
+
+model EntryLine {
+  id       String   @id @default(cuid())
+  entryId  String
+  entry    Entry    @relation(fields: [entryId], references: [id])
+  accountId String
+  account   Account  @relation(fields: [accountId], references: [id])
+  type      LineType
+  amount    Float
+}
+
+enum LineType {
+  DEBIT
+  CREDIT
+}
