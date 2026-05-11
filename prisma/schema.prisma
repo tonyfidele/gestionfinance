@@ -37,14 +37,15 @@ model Transaction {
 //comptabilite
 model Account {
   id        String   @id @default(cuid())
-  code      String   // ex: 512
-  name      String   // ex: Banque
+  code      String
+  name      String
   type      AccountType
   companyId String
 
   createdAt DateTime @default(now())
-}
 
+  lines EntryLine[]
+}
 enum AccountType {
   ASSET
   LIABILITY
@@ -53,11 +54,13 @@ enum AccountType {
 }
 model Journal {
   id        String   @id @default(cuid())
-  code      String   // ACH, VTE, BNK...
-  name      String   // Achats, Ventes, Banque
+  code      String
+  name      String
   companyId String
 
   createdAt DateTime @default(now())
+
+  entries Entry[]
 }
 model Entry {
   id        String   @id @default(cuid())
