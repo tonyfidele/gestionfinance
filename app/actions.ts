@@ -1,6 +1,6 @@
 "use server"
 
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { Budget, Transaction } from "@/type";
 
 export async function checkAndAddUser(email: string | undefined) {
