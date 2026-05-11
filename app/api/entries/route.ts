@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     const data = entrySchema.parse(body);
 
     // Récupérer l'entreprise de l'utilisateur connecté (multi-tenant)
-   const companyId = await getUserCompanyId();
+    const companyId = await getUserCompanyId();
     if (!companyId) return NextResponse.json({ error: "Entreprise introuvable" }, { status: 401 });
 
     // Vérifier total Débit = total Crédit
@@ -64,7 +64,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(entry, { status: 201 });
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 });
+      return NextResponse.json(
+        { error: error.issues.map((e) => e.message) },
+        { status: 400 }
+      );
     }
     console.error(error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
